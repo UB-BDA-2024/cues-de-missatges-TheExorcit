@@ -25,4 +25,15 @@ class MongoDBClient:
     def clearDb(self,database):
         self.client.drop_database(database)
 
+    def get(self, query={}):
+        self.getDatabase("sensors")
+        self.getCollection("sensorsData")
+        sensor_info = self.collection.find_one(query)
+        return sensor_info
+    
+    def set(self, mydoc):
+        self.getDatabase("sensors")
+        self.getCollection("sensorsData")
+        return self.collection.insert_one(mydoc)
+
 
