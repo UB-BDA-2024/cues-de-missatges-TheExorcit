@@ -10,3 +10,37 @@ class CassandraClient:
 
     def close(self):
         self.cluster.shutdown()
+
+    def execute(self, query):
+        return self.get_session().execute(query)
+    
+    def create_tables(self):
+        self.execute(
+            """CREATE KEYSPACE IF NOT EXISTS sensor WITH REPLICATION = { 
+                'class' : 'SimpleStrategy', 
+                'replication_factor' : 1 
+                }
+            """
+        )
+
+        self.execute(
+            """CREATE TABLE IF NOT EXISTS sensor.sensor_temperature(
+                id INT,
+                last_seen TIMESTAMP,
+                temperature FLOAT,
+                PRIMARY KEY (id, last_seen))
+            """
+        )
+        self.execute(
+            """CREATE TABLE IF NOT EXISTS sensor.sensor_type(
+                id INT,
+                type text,
+                PRIMARY KEY (type, id))
+                """
+        )
+        self.execute(
+            """CREATE TABLE IF NOT EXISTS sensor.sensor_battery(
+                id INT PRIMARY KEY,
+                battery_level decimal)
+                """
+        )
